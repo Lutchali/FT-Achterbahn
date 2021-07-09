@@ -1,1 +1,5 @@
 .pio/*
+CMakeLists.txt
+CMakeListsPrivate.txt
+.idea
+cmake-build-ftduino
