@@ -1,1 +1,4 @@
 .pio/*
+CMakeLists.txt
+CMakeListsPrivate.txt
+.idea
