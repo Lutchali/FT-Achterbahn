@@ -25,7 +25,13 @@ void Engine::change_direction() {
   start();
 }
 
-unsigned int Engine::get_steps() const { return ftduino.counter_get(_cport); }
+unsigned int Engine::get_steps() const {
+  if(!_resetting){
+    return ftduino.counter_get(_cport);
+  } else{
+    return 0;
+  }
+}
 
 void Engine::reset_steps() const { ftduino.counter_clear(_cport); }
 
