@@ -38,7 +38,7 @@ void Engine::reset() {
 }
 
 void Engine::cycle() {
-  if (!_running && _resetting &&
+  if (!_running && !_resetting &&
       (trigger == TriggerType::lightsensor || trigger == TriggerType::button) &&
       ftduino.input_get(trigger_port) >= trigger_value) {
     reset_steps();
@@ -49,9 +49,9 @@ void Engine::cycle() {
     reset_steps();
     start();
     _running = true;
-  } else if (_running && _resetting && get_steps() >= finish_steps) {
+  } else if (_running && !_resetting && get_steps() >= finish_steps) {
     reset();
-  } else if (_running && _resetting && ftduino.input_get(reset_port) == 1) {
+  } else if (_running && _resetting && ftduino.input_get(reset_port) == 0) {
     direction = false;
     _running = false;
     _resetting = false;
