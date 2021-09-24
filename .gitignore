@@ -3,3 +3,5 @@ CMakeLists.txt
 CMakeListsPrivate.txt
 .idea
 cmake-build-ftduino
+compile_commands.json
+.cache/
