@@ -1,5 +1,6 @@
 #include "engine.h"
 #include <Ftduino.h>
+#include <Arduino.h>
 
 #define light_station_begin Ftduino::I1
 #define light_station_end Ftduino::I2
@@ -56,7 +57,6 @@ void setup() {
 
 void loop() {
   station_motor_1.cycle();
-  Serial.println(station_motor_1.get_steps());
   /*station_motor_2.cycle();
   elevator_motor_1.cycle();*/
 }
