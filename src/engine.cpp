@@ -8,7 +8,7 @@ Engine::Engine(uint8_t port, uint8_t cport, TriggerType trigger_type,
     : direction(false), trigger(trigger_type), trigger_port(trigger_port),
       trigger_value(trigger_value), finish_steps(finish_steps),
       reset_port(reset_port), _port(port), _cport(cport), _running(false),
-      _resetting(false), _reversed(reversed) {}
+      _resetting(false), _reversed(reversed) {blocked=false;}
 
 void Engine::start() const {
   ftduino.motor_set(_port, (int)direction + 1,
@@ -40,19 +40,21 @@ void Engine::reset() {
   start();
 }
 
+bool Engine::is_resetting(){
+	return _resetting;
+}
+
 void Engine::cycle() {
   if (!_running && !_resetting &&
-      (trigger == TriggerType::lightsensor || trigger == TriggerType::button) &&
-      ftduino.input_get(trigger_port) >= trigger_value && !_reversed) {
+      ((trigger == TriggerType::lightsensor && ftduino.input_get(trigger_port) >= trigger_value) || (trigger == TriggerType::button && ftduino.input_get(trigger_port) == trigger_value)) && !_reversed &&!blocked) {
     reset_steps();
     start();
     _running = true;
   } else if (!_running && !_resetting && trigger == TriggerType::steps &&
-             ftduino.counter_get(trigger_port) >= trigger_value) {
+             ftduino.counter_get(trigger_port) >= trigger_value &&!blocked) {
     reset_steps();
     start();
     _running = true;
-	Serial.println("RUN");
   } else if (_running && !_resetting && get_steps() >= finish_steps && !_reversed ) {
     reset();
   } else if ((_running && _resetting && ftduino.input_get(reset_port) == 0) || (_reversed && _running && ftduino.input_get(reset_port) == 0)) {
