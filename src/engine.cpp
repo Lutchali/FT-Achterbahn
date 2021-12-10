@@ -42,7 +42,9 @@ void Engine::reset() {
 
 bool Engine::is_resetting() { return _resetting; }
 
-bool Engine::reset_state() {}
+bool Engine::reset_state() {
+  return ((_running && _resetting && ftduino.input_get(reset_port) == 0) || (_reversed && _running && ftduino.input_get(reset_port) == 0));
+}
 
 bool Engine::trigger_state() {
   return (trigger == TriggerType::lightsensor && ftduino.input_get(trigger_port) >= trigger_value) || (trigger == TriggerType::button && ftduino.input_get(trigger_port) == trigger_value) || (trigger == TriggerType::steps && ftduino.counter_get(trigger_port) >= trigger_value);
@@ -60,8 +62,7 @@ void Engine::cycle() {
   } else if (_running && !_resetting && get_steps() >= finish_steps &&
              !_reversed) {
     reset();
-  } else if ((_running && _resetting && ftduino.input_get(reset_port) == 0) ||
-             (_reversed && _running && ftduino.input_get(reset_port) == 0)) {
+  } else if (reset_state()) {
     direction = false;
     _running = false;
     _resetting = false;
