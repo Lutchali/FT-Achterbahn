@@ -26,6 +26,8 @@ public:
   bool is_resetting();
   void cycle();
   void reset();
+  bool reset_state();
+  bool trigger_state();
 
 private:
   int _port;
