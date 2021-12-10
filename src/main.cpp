@@ -61,11 +61,11 @@ void setup() {
 }
 
 void loop() {
-  if(station_motor_2.is_resetting() || (ftduino.input_get(station_motor_2_button)==0 && !station_motor_2.direction)){
+  /*if(station_motor_2.is_resetting() || (ftduino.input_get(station_motor_2_button)==0 && !station_motor_2.direction)){
     elevator_motor_1.blocked = true;
   } else{
     elevator_motor_1.blocked = false;
-  }
+  }*/
   station_motor_1.cycle();
   station_motor_2.cycle();
   elevator_motor_1.cycle();
