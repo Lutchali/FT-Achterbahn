@@ -12,13 +12,13 @@
 #define buffer_motor_1_button Ftduino::I8
 
 Engine station_motor_1(Ftduino::M1, Ftduino::C1, TriggerType::lightsensor,
-                       light_station_begin, 10000, station_motor_1_button, 1400,
+                       light_station_begin, 10000, station_motor_1_button, TriggerType::steps, Ftduino::C1, 1400,
                        false);
 Engine station_motor_2(Ftduino::M2, Ftduino::C2, TriggerType::steps,
-                       Ftduino::C1, 1350, station_motor_2_button, 650, true);
+                       Ftduino::C1, 1350, station_motor_2_button, TriggerType::steps, Ftduino::C2, 650,
+                       true);
 Engine elevator_motor_1(Ftduino::M3, Ftduino::C3, TriggerType::button,
-                        station_motor_2_button, 0,
-                        elevator_motor_1_button_bottom, 100, false);
+                        station_motor_2_button, 0, elevator_motor_1_button_bottom, TriggerType::button, elevator_motor_1_button_top, 0, false);
 // TODO: Implement buffer engine
 // Engine buffer_motor_1(Ftduino::M4, Ftduino::C4);
 

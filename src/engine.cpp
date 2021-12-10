@@ -4,9 +4,9 @@
 
 Engine::Engine(uint8_t port, uint8_t cport, TriggerType trigger_type,
                uint8_t trigger_port, unsigned int trigger_value,
-               uint8_t reset_port, unsigned int finish_steps, bool reversed)
-    : direction(false), trigger(trigger_type), trigger_port(trigger_port),
-      trigger_value(trigger_value), finish_steps(finish_steps),
+               uint8_t reset_port, TriggerType finish_type, int finish_port, unsigned int finish_value, bool reversed)
+    : direction(false), trigger_type(trigger_type), trigger_port(trigger_port),
+      trigger_value(trigger_value), finish_type(finish_type), finish_port(finish_port), finish_value(finish_value),
       reset_port(reset_port), _port(port), _cport(cport), _running(false),
       _resetting(false), _reversed(reversed) {
   blocked = false;
@@ -47,7 +47,11 @@ bool Engine::reset_state() {
 }
 
 bool Engine::trigger_state() {
-  return (trigger == TriggerType::lightsensor && ftduino.input_get(trigger_port) >= trigger_value) || (trigger == TriggerType::button && ftduino.input_get(trigger_port) == trigger_value) || (trigger == TriggerType::steps && ftduino.counter_get(trigger_port) >= trigger_value);
+  return (trigger_type == TriggerType::lightsensor && ftduino.input_get(trigger_port) >= trigger_value) || (trigger_type == TriggerType::button && ftduino.input_get(trigger_port) == trigger_value) || (trigger_type == TriggerType::steps && ftduino.counter_get(trigger_port) >= trigger_value);
+}
+
+bool Engine::finish_state() {
+  return (finish_type == TriggerType::steps && ftduino.counter_get(finish_port) >= finish_value) || (finish_type == TriggerType::button && ftduino.input_get(finish_port) == finish_value);
 }
 
 void Engine::cycle() {
@@ -59,7 +63,7 @@ void Engine::cycle() {
     reset_steps();
     start();
     _running = true;
-  } else if (_running && !_resetting && get_steps() >= finish_steps &&
+  } else if (_running && !_resetting && finish_state() &&
              !_reversed) {
     reset();
   } else if (reset_state()) {
@@ -72,8 +76,7 @@ void Engine::cycle() {
       _running = true;
       start();
     }
-  } else if (_running && _reversed && !_resetting &&
-             get_steps() >= finish_steps) {
+  } else if (_running && _reversed && !_resetting && finish_state()) {
     stop();
     reset_steps();
     _running = false;

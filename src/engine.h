@@ -8,15 +8,16 @@ enum class TriggerType { lightsensor, button, steps };
 class Engine {
 public:
   bool direction;
-  TriggerType trigger;
+  TriggerType trigger_type;
   int trigger_port;
   unsigned int trigger_value;
-  unsigned int finish_steps;
+  TriggerType finish_type;
+  int finish_port;
+  unsigned int finish_value;
   int reset_port;
   bool blocked;
   Engine(uint8_t port, uint8_t cport, TriggerType trigger_type,
-         uint8_t trigger_port, unsigned int trigger_value, uint8_t reset_port,
-         unsigned int finish_steps, bool reversed);
+         uint8_t trigger_port, unsigned int trigger_value, uint8_t reset_port, TriggerType finish_type, int finish_port, unsigned int finish_value, bool reversed);
   void start() const;
   void stop() const;
   void change_direction();
@@ -28,6 +29,7 @@ public:
   void reset();
   bool reset_state();
   bool trigger_state();
+  bool finish_state();
 
 private:
   int _port;
