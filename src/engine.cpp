@@ -10,15 +10,19 @@ Engine::Engine(uint8_t port, uint8_t cport, TriggerType trigger_type,
       reset_port(reset_port), _port(port), _cport(cport), _running(false),
       _resetting(false), _reversed(reversed) {
   blocked = false;
+  _delay = 0;
+  _timer = 0;
 }
 
-void Engine::start() const {
+void Engine::start() {
+  _running = true;
   ftduino.motor_set(_port, (int)direction + 1,
                     Ftduino::MAX); // (int)direction+1 is required because i
                                    // dont want to use an if statement
 }
 
-void Engine::stop() const {
+void Engine::stop() {
+  _running = false;
   ftduino.motor_set(_port, Ftduino::OFF, Ftduino::MAX);
 }
 
@@ -83,4 +87,8 @@ void Engine::cycle() {
     _resetting = false;
     direction = true;
   }
+}
+
+void Engine::set_delay(int delay){
+  _delay = delay;
 }

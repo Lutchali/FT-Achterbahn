@@ -57,7 +57,9 @@ void setup() {
   // TODO: Set pin modes for buttons
   station_motor_1.reset();
   station_motor_2.reset();
+  station_motor_2._resetting = false;
   elevator_motor_1.reset();
+  elevator_motor_1.blocked = true;
 }
 
 void loop() {
@@ -66,6 +68,19 @@ void loop() {
   } else{
     elevator_motor_1.blocked = false;
   }*/
+  if(station_motor_2.reset_state() && !station_motor_2.is_resetting() && millis() > 5000){
+    elevator_motor_1.blocked = false;
+    elevator_motor_1.start();
+    station_motor_2.stop();
+    station_motor_1.stop();
+    delay(5500);
+    //station_motor_1.start();
+    station_motor_1.reset_steps();
+    station_motor_2.reset_steps();
+    station_motor_2.direction = false;
+    station_motor_2.start();
+    delay(500);
+  }
   station_motor_1.cycle();
   station_motor_2.cycle();
   elevator_motor_1.cycle();
