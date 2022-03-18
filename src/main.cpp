@@ -9,7 +9,7 @@
 #define station_motor_2_button Ftduino::I5
 #define elevator_motor_1_button_top Ftduino::I6
 #define elevator_motor_1_button_bottom Ftduino::I7
-#define buffer_motor_1_button Ftduino::I8
+#define reset_button Ftduino::I8
 
 Engine station_motor_1(Ftduino::M1, Ftduino::C1, TriggerType::lightsensor,
                        light_station_begin, 10000, station_motor_1_button, TriggerType::steps, Ftduino::C1, 1400,
@@ -21,6 +21,9 @@ Engine elevator_motor_1(Ftduino::M3, Ftduino::C3, TriggerType::button,
                         station_motor_2_button, 0, elevator_motor_1_button_bottom, TriggerType::button, elevator_motor_1_button_top, 0, false);
 // TODO: Implement buffer engine
 // Engine buffer_motor_1(Ftduino::M4, Ftduino::C4);
+
+bool global_reset = false;
+unsigned int last_reset = 0;
 
 /*Pins:
  * I1:LightsensorStationBegin
@@ -52,6 +55,7 @@ void setup() {
   ftduino.input_set_mode(station_motor_1_button, Ftduino::SWITCH);
   ftduino.input_set_mode(station_motor_2_button, Ftduino::SWITCH);
   ftduino.input_set_mode(elevator_motor_1_button_bottom, Ftduino::SWITCH);
+  ftduino.input_set_mode(reset_button, Ftduino::SWITCH);
   ftduino.counter_set_mode(Ftduino::C1, Ftduino::C_EDGE_ANY);
   ftduino.counter_set_mode(Ftduino::C2, Ftduino::C_EDGE_ANY);
   // TODO: Set pin modes for buttons
@@ -68,7 +72,7 @@ void loop() {
   } else{
     elevator_motor_1.blocked = false;
   }*/
-  if(station_motor_2.reset_state() && !station_motor_2.is_resetting() && millis() > 5000){
+  if(station_motor_2.reset_state() && !station_motor_2.is_resetting() && millis() > 5000 && !global_reset){
     elevator_motor_1.blocked = false;
     elevator_motor_1.start();
     station_motor_2.stop();
@@ -84,4 +88,14 @@ void loop() {
   station_motor_1.cycle();
   station_motor_2.cycle();
   elevator_motor_1.cycle();
+  if(ftduino.input_get(reset_button) == 0){
+    station_motor_1.reset();
+    station_motor_2.reset();
+    elevator_motor_1.reset();
+    elevator_motor_1.blocked = true;
+    global_reset = true;
+    last_reset = millis();
+  } else if(millis()-last_reset > 5000){
+    global_reset = false;
+  }
 }
