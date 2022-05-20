@@ -5,7 +5,7 @@
 #define finish_button Ftduino::I2
 #define start_button Ftduino::I3
 
-#define speed 20
+#define speed 50
 
 bool direction = true;
 
