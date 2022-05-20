@@ -1,3 +1,5 @@
+slave_controller/.pio/*
+master_controller/.pio/*
 .pio/*
 CMakeLists.txt
 CMakeListsPrivate.txt
